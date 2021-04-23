@@ -1,0 +1,162 @@
+
+<html>
+    <head>
+        <title>Catalo de Productos</title>
+        <meta charset="utf-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+        <body>
+        <div class="container box">
+            <h1 align="center"><p>Catalogo de Productos</p></h1>
+        
+            <div align="right">
+            <button type="button" id="btnCrearRegistro" class="btn btn-info">Crear Registro</button>
+            </div>
+        
+            <div id="result" class="table-responsive">
+            <!-- Aqui se mostrar el resultado del sp_Vista !-->
+            </div>
+            <div id="productosModal" class="modal fade">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Crear Nuevos Registros</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <label>Nombre del Producto</label>
+                        <input type="text" name="txtNom" id="idNom" class="form-control" />
+                    </p>
+                        
+                    <p>
+                        <label>Descripcion</label>
+                        <input type="text" name="txtDes" id="idDes" class="form-control" />
+                    </p>
+                
+                    <p>
+                        <label>Precio</label>
+                        <input type="number" name="txtPre" id="idPrecio" class="form-control" />
+                    </p>
+            
+                    <p>
+                        <label>Escriba el nombre de la imagen de porducto</label>
+                        <input type="text" name="txtImg" id="idImagen" class="form-control" />
+                    </p>
+                </div>
+            
+                <div class="modal-footer">
+                    <input type="hidden" name="prod_nro" id="idNro" />
+                    <input type="submit" name="btnCrear" id="btnCrear" class="btn btn-success"/>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                </div>
+                
+                </div>
+            </div>
+            </div>
+        </div>
+        </body>
+    <script>
+        $(document).ready(function(){
+            $('#btnCrearRegistro').click(
+            function(){
+                $('#productosModal').modal('show'); 
+                $('#idNom').val('');
+                $('#idDes').val('');
+                $('#idPrecio').val('');
+                $('#idImagen').val('');
+                $('.modal-title').text("Crear Nuevo Registro"); 
+                $('#btnCrear').val('Crear');
+            }
+            );
+        })
+        VerProductos();
+    
+        function VerProductos() 
+        {
+        var orden = "Vista";
+
+        $.ajax({
+
+            url : "procesos.php",
+            method:"POST",
+            data:{action:orden},
+
+            success:function(data)
+            {
+            $('#result').html(data);
+            }
+
+        });
+        
+        }
+        $('#btnCrear').click(function(){
+        var num = $('#idNro').val(); 
+        var nom = $('#idNom').val(); 
+        var des = $('#idDes').val();
+        var pre = $('#idPrecio').val(); 
+        var img = $('#idImagen').val(); 
+        var orden = $('#btnCrear').val();
+
+        if(nom != '' && des != '' && pre != 0)
+        { 
+
+        $.ajax({
+            url : "procesos.php",
+            method:"POST",
+            data:{Nom:nom, Des:des, Precio: pre, Imagen: img, Num:num, action:orden},
+            success:function(data){
+                $('#productosModal').modal('hide');
+                VerProductos();
+            }
+        });
+
+        }  else
+        {
+            alert("Los dos campos son obligatorios");
+        }
+        });
+        $(document).on('click', '.update', function(){
+
+        var nro = $(this).attr("id");
+        var orden = "Buscar";
+
+        $.ajax({
+            url:"procesos.php",
+            method:"POST", 
+            data:{Num:nro, action:orden},
+            dataType:"json",
+
+            success:function(data){
+                $('#productosModal').modal('show');
+                $('.modal-title').text("Actualizar Registro");
+                $('#btnCrear').val("Update");
+                $('#idNro').val(nro);
+                $('#idNom').val(data.Nom); 
+                $('#idDes').val(data.Des);
+                $('#idPrecio').val(data.Precio);
+                $('#idImagen').val(data.Imagen);
+            }
+            });
+        });
+        $(document).on('click','.delete',function(){
+            var id = $(this).attr("id")
+            if(confirm("esta seguro que desea ELIMINAR")){
+                var action = "Delete"
+                $.ajax({
+                    url:"procesos.php",
+                    method:"POST",
+                    data:{Num:id,action:action},
+                    success:function(data){
+                        VerProductos()
+                        
+                    }
+                })
+            }else{
+                return false
+            }
+        })
+    </script>
+    </html>
