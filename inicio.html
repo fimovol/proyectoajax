@@ -57,7 +57,100 @@
             </div>
             </div>
         </div>
-        </body>
+        <div class="container box">
+            <h1 align="center">Catalogo de clientes</h1>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                Crear Clientes
+            </button>
+            
+            
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label >Nombre</label>
+                                <input id="nombrecliente" class="form-control" aria-describedby="emailHelp" placeholder="ingresa tu nombre">
+                                
+                            </div>
+                            <div class="form-group">
+                                <label >carrera</label>
+                                <input id="carreracliente" class="form-control" aria-describedby="emailHelp" placeholder="ingresa tu carrera">
+                                
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleFormControlSelect1" >edad</label>
+                                <select class="form-control" id="edadcliente">
+                                    <option>16</option>
+                                    <option>17</option>
+                                    <option>18</option>
+                                    <option>19</option>
+                                    <option>20</option>
+                                    <option>21</option>
+                                    <option>22</option>
+                                </select>
+                            </div>
+                            
+                            
+                            
+                        </form>
+                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" id="crearcliente" class="btn btn-primary">Guardar Cambios</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div id="mostrarclientes"></div>
+        </div>
+    </body>
+    <script>
+        verClientes()
+        function verClientes() 
+        {
+        var orden = "vista";
+
+        $.ajax({
+
+            url : "clientes.php",
+            method:"POST",
+            data:{Action:orden},
+
+            success:function(data)
+            {
+            $('#mostrarclientes').html(data);
+            }
+
+        });
+        
+        }
+        $('#crearcliente').click(function(){
+            
+            var nom = $('#nombrecliente').val()
+            var carrera = $('#carreracliente').val()
+            var edad = $('#edadcliente').val()
+            if(nom != '' && carrera != '' && edad != ''){
+                $.ajax({
+                    url : "clientes.php",
+                    method:"POST",
+                    data:{Nom:nom, Carrera:carrera, Edad: edad,Action:"crear"},
+                    success:function(data){
+                        $('#exampleModal').modal('hide');
+                        verClientes()
+                    }
+                });
+            }
+        })
+    </script>
     <script>
         $(document).ready(function(){
             $('#btnCrearRegistro').click(
