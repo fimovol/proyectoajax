@@ -24,7 +24,11 @@ if($_POST["Action"] == "vista"){
         {
             foreach($result as $row)
             {
-                $clientes.= $row["nombre"].$row["edad"].$row["catalogo"];
+                $clientes.= '<div class="bloque">
+                te llamas '.$row["nombre"].' tienes '.$row["edad"].' años y estas en la carrera de '.$row["catalogo"].'
+                <button class="btn btn-primary deletecliente" id="'.$row["id"].'">eliminar</button>
+                </div>'
+                ;
             }
         }
     else
@@ -32,5 +36,15 @@ if($_POST["Action"] == "vista"){
         $clientes= 'No existen registros en la Tabla Productos';
     }
         echo $clientes;
+}
+if($_POST["Action"] == "delete"){
+    $statement =$cn->prepare("call eliminarcliente(:dato1)");
+    $statement->bindParam(':dato1', $_POST["Num"]);
+    $statement->execute();
+
+    if(!empty($result))
+    {
+        echo 'Registro eELIMINADO';
+    }
 }
 ?>

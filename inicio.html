@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="estilo.css">
     </head>
         <body>
         <div class="container box">
@@ -110,7 +111,10 @@
                 </div>
             </div>
             <br>
-            <div id="mostrarclientes"></div>
+            <div id="mostrarclientes">
+                
+            </div>
+            
         </div>
     </body>
     <script>
@@ -148,6 +152,23 @@
                         verClientes()
                     }
                 });
+            }
+        })
+//deletecliente
+            $(document).on('click','.deletecliente',function(){
+            var id = $(this).attr("id")
+            if(confirm("esta seguro que desea ELIMINAR")){
+                var action = "delete"
+                $.ajax({
+                    url:"clientes.php",
+                    method:"POST",
+                    data:{Num:id,Action:action},
+                    success:function(data){
+                        verClientes()
+                    }
+                })
+            }else{
+                return false
             }
         })
     </script>
